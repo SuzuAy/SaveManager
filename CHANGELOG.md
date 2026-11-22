@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1
+
+- 文档重整：README 改为中英双语，删掉有误的截图，许可段补全（可用范围 / 必须保留声明 / 免责 / 第三方与归属声明）
+- 无功能变更，仅打包内容（Thunderstore 的 README 随版本走，所以发一个新版本）
+
 ## 0.3.0
 
 - **改名为 SM (Save Manager)**：插件 GUID `suzuay.savemanager`，DLL 与插件目录改为 `SaveManager`

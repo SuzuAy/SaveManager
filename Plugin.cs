@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace SaveManager
     public class Plugin : BaseUnityPlugin
     {
         public const string Guid = "suzuay.savemanager";
-        public const string VersionStr = "0.3.0";
+        public const string VersionStr = "0.3.1";
 
         internal static Plugin Instance;
 
