@@ -1,0 +1,13 @@
+<Project>
+  <!--
+    复制本文件为 local.props，填上你自己的路径；local.props 已被 .gitignore 忽略，不会进仓库。
+    Dotnet 里的反斜杠路径照写即可。
+  -->
+  <PropertyGroup>
+    <!-- 游戏根目录（含 CasualtiesUnknown_Data\Managed） -->
+    <GameRoot>D:\Games\Casualties Unknown</GameRoot>
+
+    <!-- Gale 的 BepInEx 目录（含 core\BepInEx.dll 与 plugins\） -->
+    <GaleProfileBepInEx>$(APPDATA)\com.kesomannen.gale\casualties-unknown\profiles\Default\BepInEx</GaleProfileBepInEx>
+  </PropertyGroup>
+</Project>

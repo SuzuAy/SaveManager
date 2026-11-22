@@ -1,0 +1,13 @@
+# 本机路径（不进仓库）
+local.props
+
+# 构建产物
+bin/
+obj/
+.msbuild/
+*.user
+*.suo
+.vs/
+
+# 依赖/缓存
+*.cache

@@ -1,0 +1,89 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 本机路径放在 local.props（已 gitignore），仓库里只留 local.props.example -->
+  <Import Project="local.props" Condition="Exists('local.props')" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyName>CSSaveSlots</AssemblyName>
+    <RootNamespace>CSSaveSlots</RootNamespace>
+    <Version>0.2.4</Version>
+    <Authors>SuzuAy</Authors>
+    <Company>SuzuAy</Company>
+    <Description>Unlimited save slots for Casualties Unknown (BepInEx 5 plugin).</Description>
+    <TargetName>CSSaveSlots</TargetName>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NuGetAudit>false</NuGetAudit>
+    <OutputPath>$(MSBuildThisFileDirectory)..\cssaveslots-build\$(Configuration)\</OutputPath>
+
+    <!-- 允许命令行/环境变量覆盖：dotnet build -p:GameRoot="..." -->
+    <GameRoot Condition="'$(GameRoot)' == ''">$(CASUALTIES_GAMEROOT)</GameRoot>
+    <GaleProfileBepInEx Condition="'$(GaleProfileBepInEx)' == ''">$(CASUALTIES_BEPINEX)</GaleProfileBepInEx>
+    <GalePluginsDir Condition="'$(GaleProfileBepInEx)' != ''">$(GaleProfileBepInEx)\plugins\CSSaveSlots\</GalePluginsDir>
+  </PropertyGroup>
+
+  <Target Name="WarnMissingPaths" BeforeTargets="BeforeBuild" Condition="'$(GameRoot)' == ''">
+    <Warning Text="GameRoot 未设置：复制 local.props.example 为 local.props 并填上游戏目录（或 dotnet build -p:GameRoot=...）" />
+  </Target>
+
+  <!-- 编完自动部署到 Gale profile；游戏开着锁文件时只警告不中断 -->
+  <Target Name="DeployToGale" AfterTargets="Build" Condition="'$(GalePluginsDir)' != ''">
+    <MakeDir Directories="$(GalePluginsDir)" ContinueOnError="WarnAndContinue" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GalePluginsDir)" SkipUnchangedFiles="true" ContinueOnError="WarnAndContinue" />
+    <Message Importance="high" Text="[CSSaveSlots] deploy -> $(GalePluginsDir)$([System.IO.Path]::GetFileName('$(TargetPath)'))" />
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>$(GaleProfileBepInEx)\core\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(GaleProfileBepInEx)\core\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GameRoot)\CasualtiesUnknown_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
