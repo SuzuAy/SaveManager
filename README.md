@@ -1,4 +1,4 @@
-﻿# SM (Save Manager)
+# SM (Save Manager)
 
 给 **Casualties Unknown** 加**无上限存档槽**的 BepInEx 5 插件喵。
 Unlimited save slots for **Casualties Unknown** (BepInEx 5 plugin).
