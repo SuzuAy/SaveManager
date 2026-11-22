@@ -15,7 +15,7 @@ namespace SaveManager
     public class Plugin : BaseUnityPlugin
     {
         public const string Guid = "suzuay.savemanager";
-        public const string VersionStr = "0.4.0";
+        public const string VersionStr = "0.4.6";
 
         internal static Plugin Instance;
 
@@ -31,6 +31,7 @@ namespace SaveManager
         internal static ConfigEntry<bool> CfgAutoSave;
         internal static ConfigEntry<int> CfgAutoSaveMinutes;
         internal static ConfigEntry<string> CfgRootDir;
+        internal static ConfigEntry<string> CfgLang;
 
         internal static bool MpAllowed => CfgAllowMp == null || CfgAllowMp.Value;
 
@@ -53,6 +54,9 @@ namespace SaveManager
                 "联机时也允许存/读档（会连同 mp_save 一起收进槽里）。");
             CfgKeepBackup = Config.Bind("存档 Slot", "KeepLastBackup", true,
                 "覆盖同名槽前，把上一份挪进 backup/。");
+            CfgLang = Config.Bind("界面 UI", "Language", "auto",
+                "界面语言：auto=跟随游戏 / zh=中文 / en=English");
+
             CfgRootDir = Config.Bind("存档 Slot", "SlotRootOverride", "",
                 "留空 = 游戏存档目录下的 SaveSlots\\。");
 

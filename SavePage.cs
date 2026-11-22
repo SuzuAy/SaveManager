@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -339,8 +339,8 @@ namespace SaveManager
             float y = 0f;
             bool sandbox = Sandbox.IsActive;
 
-            Section("操作", ref y);
-            LRow("＋ 新建存档", ref y, () =>
+            Section(Lang.T("操作"), ref y);
+            LRow(Lang.T("＋ 新建存档"), ref y, () =>
             {
                 string msg;
                 bool ok = Plugin.DoSave(null, out msg);
@@ -348,14 +348,14 @@ namespace SaveManager
                 Rebuild();
             }, sandbox ? new Color(0.98f, 0.86f, 0.52f, 1f) : (Color?)null);
 
-            LRow("读取最近一档", ref y, () =>
+            LRow(Lang.T("读取最近一档"), ref y, () =>
             {
                 string msg;
                 bool ok = Plugin.DoQuickLoad(out msg);
                 Ui.Notify(ok ? msg : "读档失败：" + msg);
             });
 
-            LRow("打开文件夹", ref y, () =>
+            LRow(Lang.T("打开文件夹"), ref y, () =>
             {
                 try
                 {
@@ -367,21 +367,21 @@ namespace SaveManager
 
             if (_selected != null)
             {
-                Section("已选存档", ref y);
-                LRow("读取此档", ref y, () =>
+                Section(Lang.T("已选存档"), ref y);
+                LRow(Lang.T("读取此档"), ref y, () =>
                 {
                     string msg;
                     bool ok = Plugin.DoLoad(_selected, out msg);
                     Ui.Notify(ok ? msg : "读档失败：" + msg);
                 });
-                LRow("回滚上一档", ref y, () =>
+                LRow(Lang.T("回滚上一档"), ref y, () =>
                 {
                     string err;
                     bool ok = SlotStore.RestoreBackup(_selected, out err);
                     Ui.Notify(ok ? "已回滚：" + _selected : "回滚失败：" + err);
                     Rebuild();
                 });
-                LRow("删除此档", ref y, () =>
+                LRow(Lang.T("删除此档"), ref y, () =>
                 {
                     string err;
                     bool ok = SlotStore.Delete(_selected, out err);
@@ -391,43 +391,146 @@ namespace SaveManager
                 });
             }
 
-            Section("存档设置", ref y);
-            LRow("存档选项与设置 ▸", ref y, () => { _screen = Screen.Options; Rebuild(); }, new Color(0.86f, 0.9f, 0.98f, 1f));
+            // 左栏底部固定一行「设置」入口（不再用标题行 + 内联行）
+            float bottom = Mathf.Max(y + 8f, _pageHeight - 46f);
+            var settingsRow = NewRow(RowPrefab, _leftContent, _colWidth, ref bottom);
+            if (settingsRow != null)
+            {
+                Bind(settingsRow, Lang.T("设置", "Settings"), () => { _screen = Screen.Options; Rebuild(); },
+                    new Color(0.86f, 0.9f, 0.98f, 1f));
+                var srt = settingsRow.GetComponent<RectTransform>();
+                if (srt != null) srt.anchoredPosition = new Vector2(srt.anchoredPosition.x, -(_pageHeight - 27f));
+            }
 
-            _leftContent.sizeDelta = new Vector2(_leftContent.sizeDelta.x, y + 8f);
+            _leftContent.sizeDelta = new Vector2(_leftContent.sizeDelta.x, Mathf.Max(bottom + 8f, _pageHeight));
         }
 
-        /// <summary>独立的「存档设置」页：点左栏入口进来，顶部「← 返回」回列表。</summary>
+        /// <summary>「设置」页：可折叠分区 + 原版设置行（复选框 / 数字框 / 下拉框，和游戏设置页同款）。</summary>
         private static void BuildOptions(RectTransform root, float width)
         {
             NewColumn("Options", root, 0f, width, out _leftScroll, out _leftContent);
-            float y = 0f;
+            _optY = 0f;
 
-            LRow("← 返回存档列表", ref y, () => { _screen = Screen.Main; Rebuild(); }, new Color(0.98f, 0.86f, 0.52f, 1f));
+            var back = NewRow(RowPrefab, _leftContent, _colWidth, ref _optY);
+            if (back != null)
+                Bind(back, Lang.T("← 返回存档列表"), () => { _screen = Screen.Main; Rebuild(); },
+                    new Color(0.98f, 0.86f, 0.52f, 1f));
 
-            Section("行为", ref y);
-            ToggleRow("游戏内读档", ref y, Plugin.CfgInGameLoad);
-            ToggleRow("自动存档", ref y, Plugin.CfgAutoSave);
-            LRow("自动存档间隔：" + Plugin.CfgAutoSaveMinutes.Value + " 分钟", ref y, () =>
+            Fold("behaviour", Lang.T("行为"), () =>
             {
-                int[] steps = { 1, 2, 5, 10, 15, 30, 60 };
-                int cur = Plugin.CfgAutoSaveMinutes.Value;
-                int idx = Array.IndexOf(steps, cur);
-                Plugin.CfgAutoSaveMinutes.Value = steps[(idx + 1) % steps.Length];
-                Plugin.SaveConfig();
-                Rebuild();
+                BoolRow(Lang.T("游戏内读档"), Plugin.CfgInGameLoad);
+                BoolRow(Lang.T("自动存档"), Plugin.CfgAutoSave);
+                IntRow(Lang.T("自动存档间隔"), Plugin.CfgAutoSaveMinutes, 1, 120);
             });
 
-            Section("存档标记", ref y);
-            ToggleRow("标记作弊（成就关闭）", ref y, Plugin.CfgCheatMark);
-            ToggleRow("沙盒不标作弊", ref y, Plugin.CfgSandboxNoCheat);
+            Fold("marking", Lang.T("存档标记"), () =>
+            {
+                BoolRow(Lang.T("标记作弊（成就关闭）"), Plugin.CfgCheatMark);
+                BoolRow(Lang.T("沙盒不标作弊"), Plugin.CfgSandboxNoCheat);
+            });
 
-            Section("其它", ref y);
-            ToggleRow("联机允许存读档", ref y, Plugin.CfgAllowMp);
-            ToggleRow("覆盖前保留上一档", ref y, Plugin.CfgKeepBackup);
-            ToggleRow("绕过教程门禁", ref y, Plugin.CfgBypassGate);
+            Fold("other", Lang.T("其它"), () =>
+            {
+                BoolRow(Lang.T("联机允许存读档"), Plugin.CfgAllowMp);
+                BoolRow(Lang.T("覆盖前保留上一档"), Plugin.CfgKeepBackup);
+                BoolRow(Lang.T("绕过教程门禁"), Plugin.CfgBypassGate);
+            });
 
-            _leftContent.sizeDelta = new Vector2(_leftContent.sizeDelta.x, y + 8f);
+            Fold("lang", Lang.T("界面", "Interface"), () =>
+            {
+                DropdownRow("Language / 语言",
+                    new[] { Lang.T("跟随游戏", "Follow game"), "中文", "English" },
+                    Lang.Mode == "zh" ? 1 : (Lang.Mode == "en" ? 2 : 0),
+                    idx =>
+                    {
+                        Plugin.CfgLang.Value = idx == 1 ? "zh" : (idx == 2 ? "en" : "auto");
+                        Plugin.SaveConfig();
+                        Lang.Invalidate();
+                        Rebuild();
+                    });
+            });
+
+            _leftContent.sizeDelta = new Vector2(_leftContent.sizeDelta.x, _optY + 8f);
+        }
+
+        // ---- 折叠分区 & 原版设置行（复选框 / 数字框 / 下拉框）----
+
+        private static float _optY;
+        private static readonly HashSet<string> Folded = new HashSet<string>();
+
+        private static void Fold(string key, string title, Action build)
+        {
+            bool folded = Folded.Contains(key);
+            var go = NewRow(RowPrefab, _leftContent, _colWidth, ref _optY);
+            if (go != null)
+            {
+                Bind(go, (folded ? "▸ " : "▾ ") + title, () =>
+                {
+                    if (Folded.Contains(key)) Folded.Remove(key); else Folded.Add(key);
+                    Rebuild();
+                }, new Color(0.98f, 0.86f, 0.52f, 1f));
+            }
+            if (!folded) build();
+        }
+
+        private static void BoolRow(string label, BepInEx.Configuration.ConfigEntry<bool> entry)
+        {
+            var go = NewRow("Special/GameSettingBool", _leftContent, _colWidth, ref _optY);
+            if (go == null || entry == null) return;
+            var lt = go.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            if (lt != null) lt.text = label;
+            var tg = go.transform.GetChild(1).GetComponent<Toggle>();
+            if (tg != null)
+            {
+                tg.SetIsOnWithoutNotify(entry.Value);
+                tg.onValueChanged.AddListener(v => { entry.Value = v; Plugin.SaveConfig(); });
+            }
+        }
+
+        private static void IntRow(string label, BepInEx.Configuration.ConfigEntry<int> entry, int min, int max)
+        {
+            var go = NewRow("Special/GameSettingInt", _leftContent, _colWidth, ref _optY);
+            if (go == null || entry == null) return;
+            var lt = go.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            if (lt != null) lt.text = label + Lang.T("（分钟）", " (min)");
+            var f = go.transform.GetChild(1).GetComponent<TMP_InputField>();
+            if (f != null)
+            {
+                f.SetTextWithoutNotify(entry.Value.ToString());
+                f.onEndEdit.AddListener(v =>
+                {
+                    if (!int.TryParse(v, out int n)) n = entry.Value;
+                    n = Mathf.Clamp(n, min, max);
+                    f.SetTextWithoutNotify(n.ToString());
+                    entry.Value = n;
+                    Plugin.SaveConfig();
+                });
+            }
+        }
+
+        private static void DropdownRow(string label, string[] options, int current, Action<int> pick)
+        {
+            var go = NewRow("Special/GameSettingDropdown", _leftContent, _colWidth, ref _optY);
+            if (go == null) return;
+            var lt = go.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            if (lt != null) lt.text = label;
+            var dd = go.transform.GetChild(1).GetComponent<TMP_Dropdown>();
+            if (dd == null) return;
+            dd.ClearOptions();
+            var list = new List<TMP_Dropdown.OptionData>();
+            foreach (var o in options) list.Add(new TMP_Dropdown.OptionData(o));
+            dd.AddOptions(list);
+            dd.SetValueWithoutNotify(Mathf.Clamp(current, 0, options.Length - 1));
+            dd.onValueChanged.RemoveAllListeners();
+            dd.onValueChanged.AddListener(i => { try { pick(i); } catch (Exception e) { Log.Error("下拉框异常：" + e); } });
+        }
+
+        private static string LangModeLabel()
+        {
+            string m = Lang.Mode;
+            if (m == "zh") return "中文";
+            if (m == "en") return "English";
+            return Lang.T("跟随游戏", "Follow game");
         }
 
         // ------------------------------------------------------------ 右栏（存档列表）
@@ -446,7 +549,7 @@ namespace SaveManager
             if (_selected != null)
             {
                 SlotMeta sel = slots.FirstOrDefault(s => s.name == _selected);
-                RRow("已选：" + _selected, ref y, w, null, new Color(0.98f, 0.86f, 0.52f, 1f));
+                RRow(Lang.T("已选：") + _selected, ref y, w, null, new Color(0.98f, 0.86f, 0.52f, 1f));
 
                 GameObject igo = NewRow(InputPrefab, _rightContent, w, ref y);
                 if (igo != null)
@@ -454,7 +557,7 @@ namespace SaveManager
                     try
                     {
                         var lt = igo.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-                        if (lt != null) lt.text = "新名字";
+                        if (lt != null) lt.text = Lang.T("新名字");
                         var f = igo.transform.GetChild(1).GetComponent<TMP_InputField>();
                         if (f != null)
                         {
@@ -477,11 +580,11 @@ namespace SaveManager
                 }
             }
 
-            RRow("共 " + slots.Count + " 档（无上限，按时间倒序）", ref y, w, null, new Color(0.72f, 0.72f, 0.68f, 1f));
+            RRow(Lang.T("共 ", "") + slots.Count + Lang.T(" 档（无上限，按时间倒序）", " slots (unlimited, newest first)"), ref y, w, null, new Color(0.72f, 0.72f, 0.68f, 1f));
 
             if (slots.Count == 0)
             {
-                RRow("（还没有存档：进游戏按 F5，或点左边「新建存档」）", ref y, w, null, new Color(0.72f, 0.72f, 0.68f, 1f));
+                RRow(Lang.T("（还没有存档：进游戏按 F5，或点左边「新建存档」）"), ref y, w, null, new Color(0.72f, 0.72f, 0.68f, 1f));
             }
             else
             {
@@ -489,10 +592,10 @@ namespace SaveManager
                 {
                     SlotMeta mm = m;
                     string mark = m.name == _selected ? "▶ " : "\u2003";
-                    string tag = m.mode == "mp" ? "联机" : "单人";
-                    if (m.sandbox) tag += "·沙盒";
-                    if (m.cheated) tag += "·作弊";
-                    RRow(string.Format("{0}{1}\u2003D{2} · {3} · {4}件 · {5}", mark, m.name, m.biome, m.DurationText(), m.itemCount, tag),
+                    string tag = m.mode == "mp" ? Lang.T("联机", "MP") : Lang.T("单人", "SP");
+                    if (m.sandbox) tag += Lang.T("·沙盒", "·sbx");
+                    if (m.cheated) tag += Lang.T("·作弊", "·cheat");
+                    RRow(string.Format(Lang.T("{0}{1}\u2003D{2} · {3} · {4}件 · {5}", "{0}{1}\u2003D{2} · {3} · {4} items · {5}"), mark, m.name, m.biome, m.DurationText(), m.itemCount, tag),
                         ref y, w,
                         () => { _selected = mm.name; Rebuild(); },
                         null);
@@ -505,6 +608,48 @@ namespace SaveManager
         private static void Rebuild()
         {
             OnTabSelected(_menu, (Setting.SettingCategory)TabIndex);
+        }
+
+        /// <summary>独立窗口模式：直接把存档页渲染进 SettingsMenu 的 content（不经过分页）。</summary>
+        public static void RenderStandalone(SettingsMenu menu)
+        {
+            if (menu == null || menu.content == null) return;
+            _menu = menu;
+            _content = menu.content;
+            _screen = Screen.Main;
+            ClearRows();
+            ClearVanillaRows(menu);
+            try { BuildPage(); }
+            catch (Exception e) { Log.Error("渲染存档窗口失败：" + e); }
+        }
+
+        /// <summary>清掉 SettingsMenu.Start 里生成的「画面」页设置行，否则会和存档页叠在一起。</summary>
+        private static void ClearVanillaRows(SettingsMenu menu)
+        {
+            try
+            {
+                var f = typeof(SettingsMenu).GetField("spawnedSettings",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (f != null)
+                {
+                    var list = f.GetValue(menu) as List<GameObject>;
+                    if (list != null)
+                    {
+                        foreach (var go in list) if (go != null) UnityEngine.Object.Destroy(go);
+                        list.Clear();
+                    }
+                }
+
+                if (_content == null) return;
+                for (int i = _content.childCount - 1; i >= 0; i--)
+                {
+                    GameObject child = _content.GetChild(i).gameObject;
+                    if (_rows.Contains(child)) continue;
+                    UnityEngine.Object.Destroy(child);
+                }
+                Log.Info("存档窗口：已清空原版设置行");
+            }
+            catch (Exception e) { Log.Warn("清空原版设置行失败：" + e.Message); }
         }
 
         // ------------------------------------------------------------ 原生行
@@ -556,7 +701,7 @@ namespace SaveManager
         private static void ToggleRow(string label, ref float y, BepInEx.Configuration.ConfigEntry<bool> entry, string tip = null)
         {
             bool on = entry != null && entry.Value;
-            LRow(label + "：" + (on ? "开" : "关"), ref y, () =>
+            LRow(label + (on ? Lang.T("：开", " : ON") : Lang.T("：关", " : OFF")), ref y, () =>
             {
                 if (entry != null) entry.Value = !on;
                 Plugin.SaveConfig();
