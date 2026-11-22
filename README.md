@@ -168,7 +168,7 @@ Vanilla *Casualties Unknown* keeps a single resume point (`save.sv`) and **delet
 
 Requires **BepInEx 5.4.23.x** (`netstandard2.1`).
 
-- **Thunderstore**: [**1101-SaveManager**](https://thunderstore.io/c/casualties-unknown/p/1101/SaveManager/) (community Casualties: Unknown)
+- **Thunderstore**: [**SuzuAy-SaveManager**](https://thunderstore.io/c/casualties-unknown/p/SuzuAy/SaveManager/) (community Casualties: Unknown)
 - **Gale**: Gale *is* a Thunderstore client — search `SaveManager` on the Mods page
 - **Manual**: drop the DLL at `<GameDir>\BepInEx\plugins\SaveManager\SaveManager.dll`
 
