@@ -15,7 +15,7 @@ namespace SaveManager
     public class Plugin : BaseUnityPlugin
     {
         public const string Guid = "suzuay.savemanager";
-        public const string VersionStr = "0.3.1";
+        public const string VersionStr = "0.4.0";
 
         internal static Plugin Instance;
 
