@@ -8,13 +8,13 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyName>CSSaveSlots</AssemblyName>
-    <RootNamespace>CSSaveSlots</RootNamespace>
-    <Version>0.2.4</Version>
+    <AssemblyName>SaveManager</AssemblyName>
+    <RootNamespace>SaveManager</RootNamespace>
+    <Version>0.3.0</Version>
     <Authors>SuzuAy</Authors>
     <Company>SuzuAy</Company>
-    <Description>Unlimited save slots for Casualties Unknown (BepInEx 5 plugin).</Description>
-    <TargetName>CSSaveSlots</TargetName>
+    <Description>SM (Save Manager) - unlimited save slots for Casualties Unknown.</Description>
+    <TargetName>SaveManager</TargetName>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NuGetAudit>false</NuGetAudit>
     <OutputPath>$(MSBuildThisFileDirectory)..\cssaveslots-build\$(Configuration)\</OutputPath>
@@ -22,7 +22,7 @@
     <!-- 允许命令行/环境变量覆盖：dotnet build -p:GameRoot="..." -->
     <GameRoot Condition="'$(GameRoot)' == ''">$(CASUALTIES_GAMEROOT)</GameRoot>
     <GaleProfileBepInEx Condition="'$(GaleProfileBepInEx)' == ''">$(CASUALTIES_BEPINEX)</GaleProfileBepInEx>
-    <GalePluginsDir Condition="'$(GaleProfileBepInEx)' != ''">$(GaleProfileBepInEx)\plugins\CSSaveSlots\</GalePluginsDir>
+    <GalePluginsDir Condition="'$(GaleProfileBepInEx)' != ''">$(GaleProfileBepInEx)\plugins\SaveManager\</GalePluginsDir>
   </PropertyGroup>
 
   <Target Name="WarnMissingPaths" BeforeTargets="BeforeBuild" Condition="'$(GameRoot)' == ''">
@@ -33,7 +33,7 @@
   <Target Name="DeployToGale" AfterTargets="Build" Condition="'$(GalePluginsDir)' != ''">
     <MakeDir Directories="$(GalePluginsDir)" ContinueOnError="WarnAndContinue" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GalePluginsDir)" SkipUnchangedFiles="true" ContinueOnError="WarnAndContinue" />
-    <Message Importance="high" Text="[CSSaveSlots] deploy -> $(GalePluginsDir)$([System.IO.Path]::GetFileName('$(TargetPath)'))" />
+    <Message Importance="high" Text="[SM] deploy -> $(GalePluginsDir)$([System.IO.Path]::GetFileName('$(TargetPath)'))" />
   </Target>
 
   <ItemGroup>

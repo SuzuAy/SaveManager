@@ -1,0 +1,9 @@
+{
+  "name": "SaveManager",
+  "version_number": "0.3.0",
+  "website_url": "https://github.com/SuzuAy/SaveManager",
+  "description": "SM (Save Manager) - unlimited save slots. Save anytime with F5, browse unlimited slots in a native settings tab, sandbox & multiplayer aware.",
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2305"
+  ]
+}

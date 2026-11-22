@@ -1,4 +1,4 @@
-# Casualties Save Slots
+﻿# SM (Save Manager)
 
 给 **Casualties Unknown** 加**无上限存档槽**的 BepInEx 5 插件喵。
 Unlimited save slots for **Casualties Unknown** (BepInEx 5 plugin).
@@ -26,13 +26,13 @@ Unlimited save slots for **Casualties Unknown** (BepInEx 5 plugin).
 **Gale**：放进 profile 的插件目录
 
 ```
-%APPDATA%\com.kesomannen.gale\casualties-unknown\profiles\<profile>\BepInEx\plugins\CSSaveSlots\CSSaveSlots.dll
+%APPDATA%\com.kesomannen.gale\casualties-unknown\profiles\<profile>\BepInEx\plugins\SaveManager\SaveManager.dll
 ```
 
 **手动装 BepInEx**：
 
 ```
-<游戏目录>\BepInEx\plugins\CSSaveSlots\CSSaveSlots.dll
+<游戏目录>\BepInEx\plugins\SaveManager\SaveManager.dll
 ```
 
 启动游戏后 `BepInEx\LogOutput.log` 里应能看到 `设置页已注册「存档」分页`。
@@ -97,7 +97,7 @@ csexport <槽名>     把槽铺成游戏当前的 save.sv
 
 ## 配置
 
-`BepInEx\config\xiaomi.cssaveslots.cfg`（也能在游戏里的「存档设置」子页改，重启后保持）
+`BepInEx\config\suzuay.savemanager.cfg`（也能在游戏里的「存档设置」子页改，重启后保持）
 
 | 键 | 默认 | 说明 |
 |---|---|---|
@@ -114,10 +114,10 @@ csexport <槽名>     把槽铺成游戏当前的 save.sv
 ## 构建
 
 ```powershell
-git clone https://github.com/SuzuAy/Casualties-Save-Slots
-cd Casualties-Save-Slots
+git clone https://github.com/SuzuAy/SaveManager
+cd SaveManager
 Copy-Item local.props.example local.props   # 填自己的游戏路径
-dotnet build CSSaveSlots.csproj -c Release
+dotnet build SaveManager.csproj -c Release
 ```
 
 `local.props` 填两个路径：
@@ -125,7 +125,7 @@ dotnet build CSSaveSlots.csproj -c Release
 - `GameRoot`：游戏根目录（含 `CasualtiesUnknown_Data\Managed`）
 - `GaleProfileBepInEx`：Gale 的 BepInEx 目录（含 `core\`、`plugins\`），手动装 BepInEx 时也填那里
 
-编完会自动把 DLL 拷到 `$(GaleProfileBepInEx)\plugins\CSSaveSlots\`（游戏开着锁文件只警告、不中断编译）。
+编完会自动把 DLL 拷到 `$(GaleProfileBepInEx)\plugins\SaveManager\`（游戏开着锁文件只警告、不中断编译）。
 
 也可以直接命令行覆盖：
 
@@ -152,3 +152,4 @@ dotnet build -c Release -p:GameRoot="D:\Games\Casualties Unknown" -p:GaleProfile
 ## 许可
 
 MIT。与游戏开发商无关，使用风险自负，请先备份存档。
+

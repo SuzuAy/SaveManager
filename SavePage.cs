@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace CSSaveSlots
+namespace SaveManager
 {
     /// <summary>
     /// 存档页 = 游戏设置菜单里的第 6 个分页。
@@ -55,7 +55,7 @@ namespace CSSaveSlots
             if (last == null || last.transform.parent == null) return;
 
             GameObject go = UnityEngine.Object.Instantiate(last.gameObject, last.transform.parent);
-            go.name = "CSSaveSlotsTab";
+            go.name = "SaveManagerTab";
             go.SetActive(true);
 
             // 几何参数向最后一个分页看齐（只动自己，不动别人）
@@ -274,7 +274,7 @@ namespace CSSaveSlots
             float width = PageWidth();
             _pageHeight = PageHeight();
 
-            RectTransform root = NewRect("CSSaveSlots.Page", _content);
+            RectTransform root = NewRect("SaveManager.Page", _content);
             root.anchorMin = root.anchorMax = new Vector2(0.5f, 1f);
             root.pivot = new Vector2(0.5f, 1f);
             root.sizeDelta = new Vector2(width, _pageHeight);
@@ -707,3 +707,5 @@ namespace CSSaveSlots
         }
     }
 }
+
+

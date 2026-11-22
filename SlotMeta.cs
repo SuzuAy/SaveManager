@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace CSSaveSlots
+namespace SaveManager
 {
     /// <summary>一个存档槽的随档元数据（写进 slot 目录的 meta.json，方便游戏外直接看）。</summary>
     [Serializable]
@@ -41,3 +41,4 @@ namespace CSSaveSlots
         }
     }
 }
+

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace CSSaveSlots
+namespace SaveManager
 {
     /// <summary>
     /// 存档槽的落盘逻辑：快照 / 还原 / 列表 / 改名 / 删除 / 回滚。
@@ -349,3 +349,4 @@ namespace CSSaveSlots
         }
     }
 }
+

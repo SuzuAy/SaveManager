@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 
-namespace CSSaveSlots
+namespace SaveManager
 {
     // ------------------------------------------------------------------ 热键
     internal static class Hotkeys
@@ -135,3 +135,4 @@ namespace CSSaveSlots
         }
     }
 }
+

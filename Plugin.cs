@@ -9,13 +9,13 @@ using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 
-namespace CSSaveSlots
+namespace SaveManager
 {
-    [BepInPlugin(Guid, "Casualties Save Slots", VersionStr)]
+    [BepInPlugin(Guid, "SM (Save Manager)", VersionStr)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string Guid = "xiaomi.cssaveslots";
-        public const string VersionStr = "0.2.0";
+        public const string Guid = "suzuay.savemanager";
+        public const string VersionStr = "0.3.0";
 
         internal static Plugin Instance;
 
@@ -260,8 +260,11 @@ namespace CSSaveSlots
 
         public static void Init(ManualLogSource src) { _src = src; }
 
-        public static void Info(string m) { if (_src != null) _src.LogInfo(m); else Debug.Log("[CSSaveSlots] " + m); }
-        public static void Warn(string m) { if (_src != null) _src.LogWarning(m); else Debug.LogWarning("[CSSaveSlots] " + m); }
-        public static void Error(string m) { if (_src != null) _src.LogError(m); else Debug.LogError("[CSSaveSlots] " + m); }
+        public static void Info(string m) { if (_src != null) _src.LogInfo(m); else Debug.Log("[SM] " + m); }
+        public static void Warn(string m) { if (_src != null) _src.LogWarning(m); else Debug.LogWarning("[SM] " + m); }
+        public static void Error(string m) { if (_src != null) _src.LogError(m); else Debug.LogError("[SM] " + m); }
     }
 }
+
+
+

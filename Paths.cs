@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace CSSaveSlots
+namespace SaveManager
 {
     /// <summary>所有路径都从游戏自己的 persistentDataPath 推出来，不写死。</summary>
     internal static class Paths
@@ -63,3 +63,4 @@ namespace CSSaveSlots
         }
     }
 }
+

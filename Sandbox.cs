@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using UnityEngine;
 
-namespace CSSaveSlots
+namespace SaveManager
 {
     /// <summary>沙盒模式（教程里的 sandbox 场地，可在里面随便用控制台）检测。</summary>
     internal static class Sandbox
@@ -65,3 +65,4 @@ namespace CSSaveSlots
         }
     }
 }
+
