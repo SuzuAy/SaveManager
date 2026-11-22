@@ -29,7 +29,7 @@ Unlimited save slots for **Casualties Unknown** — a BepInEx 5 plugin.
 
 需要 **BepInEx 5.4.23.x**（`netstandard2.1`）。
 
-- **Thunderstore**：[**1101-SaveManager**](https://thunderstore.io/c/casualties-unknown/p/1101/SaveManager/)（命名空间 `1101`，社区 Casualties: Unknown）
+- **Thunderstore**：[**SuzuAy-SaveManager**](https://thunderstore.io/c/casualties-unknown/p/SuzuAy/SaveManager/)（社区 Casualties: Unknown）
 - **Gale**：Gale 是 Thunderstore 客户端，在 Mods 页搜 `SaveManager` 即可（或直接装上面的包）
 - **手动**：
 
@@ -168,7 +168,7 @@ Vanilla *Casualties Unknown* keeps a single resume point (`save.sv`) and **delet
 
 Requires **BepInEx 5.4.23.x** (`netstandard2.1`).
 
-- **Thunderstore**: [**1101-SaveManager**](https://thunderstore.io/c/casualties-unknown/p/1101/SaveManager/) (namespace `1101`, community Casualties: Unknown)
+- **Thunderstore**: [**1101-SaveManager**](https://thunderstore.io/c/casualties-unknown/p/1101/SaveManager/) (community Casualties: Unknown)
 - **Gale**: Gale *is* a Thunderstore client — search `SaveManager` on the Mods page
 - **Manual**: drop the DLL at `<GameDir>\BepInEx\plugins\SaveManager\SaveManager.dll`
 
