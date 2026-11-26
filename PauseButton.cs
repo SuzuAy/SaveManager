@@ -40,7 +40,7 @@ namespace SaveManager
 
                 // 换图标：原版按钮 = 外层圆环 Image + 图标 Image。
                 // 不同按钮之间「圆环贴图相同、图标贴图不同」，据此定位图标那一张再替换（不碰圆环）。
-                Sprite glyph = Glyph();
+                Sprite glyph = Icons.FloppyRing();
                 List<Image> selfImgs = ImagesOf(go);
                 int iconIdx = FindIconIndex(handler, templateIdx, selfImgs.Count);
                 if (iconIdx >= 0 && iconIdx < selfImgs.Count && selfImgs[iconIdx] != null)

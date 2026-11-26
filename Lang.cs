@@ -15,6 +15,15 @@ namespace SaveManager
             ["存档"] = "Save",
             ["打开存档页面（SM · Save Manager）"] = "Open the save slots page (SM)",
             ["打开存档页面"] = "Open the save slots page",
+            ["保存并退出到主菜单"] = "Save & quit to menu",
+            ["管理"] = "Manage",
+            ["批量管理"] = "Batch mode",
+            ["删除所选"] = "Delete selected",
+            ["确认删除所选（再点一次）"] = "Confirm delete selected (click again)",
+            ["确认删除？再点一次"] = "Confirm delete? click again",
+            ["再点一次「确认删除」才会真的删除"] = "Click again to really delete it",
+            ["还没有勾选存档"] = "No slot selected yet",
+            ["已存档并退出："] = "Saved, leaving: ",
             ["找不到界面，无法打开存档窗口"] = "UI not found, cannot open the save window",
 
             // 存档页 - 左栏

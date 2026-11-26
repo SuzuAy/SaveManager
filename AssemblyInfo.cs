@@ -1,6 +1,6 @@
 using System.Reflection;
 
 // csproj 里 GenerateAssemblyInfo=false，所以版本号在这里手写
-[assembly: AssemblyVersion("0.4.6.0")]
-[assembly: AssemblyFileVersion("0.4.6.0")]
-[assembly: AssemblyInformationalVersion("0.4.6")]
+[assembly: AssemblyVersion("0.5.0.0")]
+[assembly: AssemblyFileVersion("0.5.0.0")]
+[assembly: AssemblyInformationalVersion("0.5.0")]

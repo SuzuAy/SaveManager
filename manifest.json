@@ -1,6 +1,6 @@
 {
   "name": "SaveManager",
-  "version_number": "0.4.6",
+  "version_number": "0.5.0",
   "website_url": "https://github.com/SuzuAy/SaveManager",
   "description": "SM - unlimited save slots for Casualties Unknown. Save anytime with F5, pick any slot from a native settings tab, sandbox & multiplayer aware.",
   "dependencies": [

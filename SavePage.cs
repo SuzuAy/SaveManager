@@ -35,6 +35,10 @@ namespace SaveManager
         private static SettingsMenu _menu;
         private static Button _tabButton;
         private static string _selected;
+        private static bool _batchMode;
+        private static readonly HashSet<string> _batchSel = new HashSet<string>();
+        private static string _confirmDelete;
+        private static bool _confirmBatch;
         private static float _pageHeight = 430f;
         private static float _keepLeft = 1f;
         private static float _keepRight = 1f;
@@ -365,7 +369,51 @@ namespace SaveManager
                 catch (Exception e) { Ui.Notify("打开目录失败：" + e.Message); }
             });
 
-            if (_selected != null)
+            if (SlotStore.InWorld)
+            {
+                LRow(Lang.T("保存并退出到主菜单", "Save & quit to menu"), ref y, () =>
+                {
+                    string slot, err;
+                    if (!SlotStore.Capture(null, out slot, out err)) { Ui.Notify("存档失败：" + err); return; }
+                    Ui.Notify(Lang.T("已存档并退出：", "Saved, leaving: ") + slot);
+                    try { if (PauseHandler.main != null && PauseHandler.paused) PauseHandler.TogglePause(); } catch { }
+                    try { PlayerCamera.main.ToMainMenu(); } catch (Exception e) { Log.Error("退出到主菜单失败：" + e.Message); }
+                });
+            }
+
+            Section(Lang.T("管理", "Manage"), ref y);
+            LRow((_batchMode ? "▣ " : "▢ ") + Lang.T("批量管理", "Batch mode")
+                 + (_batchMode ? Lang.T("（已选 ", " (") + _batchSel.Count + Lang.T(" 档）", " selected)") : ""), ref y, () =>
+            {
+                _batchMode = !_batchMode;
+                _batchSel.Clear();
+                _confirmBatch = false;
+                Rebuild();
+            }, _batchMode ? new Color(0.98f, 0.86f, 0.52f, 1f) : (Color?)null);
+
+            if (_batchMode)
+            {
+                LRow((_confirmBatch ? Lang.T("确认删除所选（再点一次）", "Confirm delete selected (click again)") : Lang.T("删除所选", "Delete selected"))
+                     + " (" + _batchSel.Count + ")", ref y, () =>
+                {
+                    if (_batchSel.Count == 0) { Ui.Notify(Lang.T("还没有勾选存档", "No slot selected yet")); return; }
+                    if (!_confirmBatch) { _confirmBatch = true; Rebuild(); return; }
+
+                    int n = 0;
+                    foreach (string name in new List<string>(_batchSel))
+                    {
+                        string err;
+                        if (SlotStore.Delete(name, out err)) n++;
+                    }
+                    Ui.Notify(Lang.T("已删除 ", "Deleted ") + n + Lang.T(" 个存档", " slots"));
+                    _batchSel.Clear();
+                    _confirmBatch = false;
+                    if (_selected != null && !Directory.Exists(Paths.SlotDir(_selected))) _selected = null;
+                    Rebuild();
+                }, _confirmBatch ? new Color(1f, 0.55f, 0.5f, 1f) : (Color?)null);
+            }
+
+            if (_selected != null && !_batchMode)
             {
                 Section(Lang.T("已选存档"), ref y);
                 LRow(Lang.T("读取此档"), ref y, () =>
@@ -381,14 +429,27 @@ namespace SaveManager
                     Ui.Notify(ok ? "已回滚：" + _selected : "回滚失败：" + err);
                     Rebuild();
                 });
-                LRow(Lang.T("删除此档"), ref y, () =>
-                {
-                    string err;
-                    bool ok = SlotStore.Delete(_selected, out err);
-                    Ui.Notify(ok ? "已删除：" + _selected : "删除失败：" + err);
-                    _selected = null;
-                    Rebuild();
-                });
+
+                bool needConfirm = _confirmDelete == _selected;
+                LRow(needConfirm
+                        ? Lang.T("确认删除？再点一次", "Confirm delete? click again")
+                        : Lang.T("删除此档", "Delete this slot"),
+                    ref y, () =>
+                    {
+                        if (_confirmDelete != _selected)
+                        {
+                            _confirmDelete = _selected;
+                            Ui.Notify(Lang.T("再点一次「确认删除」才会真的删除", "Click again to really delete"));
+                            Rebuild();
+                            return;
+                        }
+                        string err;
+                        bool ok = SlotStore.Delete(_selected, out err);
+                        Ui.Notify(ok ? "已删除：" + _selected : "删除失败：" + err);
+                        _selected = null;
+                        _confirmDelete = null;
+                        Rebuild();
+                    }, needConfirm ? new Color(1f, 0.55f, 0.5f, 1f) : (Color?)null);
             }
 
             // 左栏底部固定一行「设置」入口（不再用标题行 + 内联行）
@@ -591,13 +652,29 @@ namespace SaveManager
                 foreach (SlotMeta m in slots)
                 {
                     SlotMeta mm = m;
-                    string mark = m.name == _selected ? "▶ " : "\u2003";
+                    string mark;
+                    if (_batchMode) mark = _batchSel.Contains(m.name) ? "☑ " : "☐ ";
+                    else mark = m.name == _selected ? "▶ " : "\u2003";
                     string tag = m.mode == "mp" ? Lang.T("联机", "MP") : Lang.T("单人", "SP");
                     if (m.sandbox) tag += Lang.T("·沙盒", "·sbx");
                     if (m.cheated) tag += Lang.T("·作弊", "·cheat");
                     RRow(string.Format(Lang.T("{0}{1}\u2003D{2} · {3} · {4}件 · {5}", "{0}{1}\u2003D{2} · {3} · {4} items · {5}"), mark, m.name, m.biome, m.DurationText(), m.itemCount, tag),
                         ref y, w,
-                        () => { _selected = mm.name; Rebuild(); },
+                        () =>
+                        {
+                            if (_batchMode)
+                            {
+                                if (_batchSel.Contains(mm.name)) _batchSel.Remove(mm.name);
+                                else _batchSel.Add(mm.name);
+                                _confirmBatch = false;
+                            }
+                            else
+                            {
+                                _selected = mm.name;
+                                _confirmDelete = null;
+                            }
+                            Rebuild();
+                        },
                         null);
                 }
             }
@@ -837,8 +914,7 @@ namespace SaveManager
     {
         private static void Postfix(SettingsMenu __instance)
         {
-            try { SavePage.InstallTab(__instance); }
-            catch (Exception e) { Log.Error("装存档分页失败：" + e); }
+            // 存档页已独立成窗口（ESC 圆形按钮 / 主菜单图标），不再往设置菜单里加分页。
         }
     }
 
